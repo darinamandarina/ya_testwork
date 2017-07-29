@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Yandex Form</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+      
+  </header>
+  <form action="" id="myForm" name="myForm">
+    <h1>Please fill this form</h1>
+    <h4>Each field should be filled</h4>
+  <fieldset>
+    <legend>Test input form</legend>
+    <div><label for="fio">Full name</label><input id="fio" name="fio" type="text" placeholder="Ivanov Ivan Ivanov" required><span hidden id="fio_warn">Должно быть ровно три слова</span></div>
+    <div><label for="email">Email</label><input id="email" name="email" type="email" placeholder="ivan1234@yandex.com" required><span hidden id="email_warn">Не правильный формат email</span></div>
+    <div><label for="phone">Phone number</label><input id="phone" name="phone" type="tel" placeholder="+7(905)111-33-22" required datamessageid="warn"><br><span hidden id="phone_warn">только номер телефона, сумма цифр которого не превышает 30</span></div>
+  </fieldset>
+  <button id="submitButton" type="submit">Submit</button>
+  <div id="resultContainer" >
+<!--     <span class="resultText">The form has sent</span>-->
+  </div>
+  </form>
+  <script src="index.js"></script>
+</body>
+</html>
