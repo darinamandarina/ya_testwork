@@ -1,0 +1,8 @@
+.error{
+    border: 1px solid red;
+}
+
+[id$="_warn"]{
+    font: 80%;
+    color: indianred;
+}
