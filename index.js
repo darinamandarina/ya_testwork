@@ -2,17 +2,16 @@ let fio = document.getElementById('fio'),
     email = document.getElementById('email'),
     phone = document.getElementById('phone'),
     button = document.getElementById('submitButton');
-//создадим шаблоны для валидации
+//шаблоны для валидации
 let fio_pattern = /\w+\s\w+\s\w+/,
     email_pattern = /@ya.ru|yandex\.(ru|by|kz|ua|com)$/,
     phone_pattern = /\+7\d{10}/;
 
 function onChg(elm, pattern, id_of_span) {
     //fio = fio.value; или fio.innerText или fio.innerHTML ,fio_patern.test(fio)
-    //TODO сделать так, чтоб функция по определению схожести паттерна со строкой работала
     elm.addEventListener('change', function () {
         let span = document.getElementById(id_of_span);
-
+    //добавить проверку для phone, сумма цифр которого sum<=30.
         if (this.value.match(pattern) == null || (this.value.match(pattern).length == 0 || pattern.test(elm.value).length == 0)) {
 
             span.removeAttribute('hidden');
