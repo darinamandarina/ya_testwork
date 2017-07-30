@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Yandex Form</title>
@@ -16,7 +16,7 @@
     <legend>Test input form</legend>
     <div><label for="fio">Full name</label><input id="fio" name="fio" type="text" placeholder="Ivanov Ivan Ivanov" required><span hidden id="fio_warn">Должно быть ровно три слова</span></div>
     <div><label for="email">Email</label><input id="email" name="email" type="email" placeholder="ivan1234@yandex.com" required><span hidden id="email_warn">Не правильный формат email</span></div>
-    <div><label for="phone">Phone number</label><input id="phone" name="phone" type="tel" placeholder="+7(905)111-33-22" required datamessageid="warn"><br><span hidden id="phone_warn">только номер телефона, сумма цифр которого не превышает 30</span></div>
+    <div><label for="phone">Phone number</label><input id="phone" name="phone" type="tel" placeholder="+7(905)111-33-22" required datamessageid="warn"><br><span hidden id="phone_warn">только номер телефона, введеный без пробела и начинающийся с +7, сумма цифр которого не превышает 30</span></div>
   </fieldset>
   <button id="submitButton" type="submit">Submit</button>
   <div id="resultContainer" >
