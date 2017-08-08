@@ -11,23 +11,36 @@ let fio_pattern = /(\w|[\u0410-\u044F])+\s(\w|[\u0410-\u044F])+\s(\w|[\u0410-\u0
 
 
 function onChg(elm, pattern, id_of_span) {
-    //fio = fio.value; или fio.innerText или fio.innerHTML ,fio_patern.test(fio)
     let span = document.getElementById(id_of_span);
     elm.addEventListener('change', function () {
-        if (this.value.match(pattern) == null || (this.value.match(pattern).length == 0 || pattern.test(elm.value).length == 0)) {
-            showErr();
-        } else {
+        let errorFields = [];
+        if (this.value.match(pattern) == null || (this.value.match(pattern).length == 0 || pattern.test(elm.value).length == 0)) //добавить отлавливание ошибки try{}catch(e){}
+        {showErr();
+        errorFields.push(elm);
+    }else {
             span.setAttribute("hidden", "");
-            if (elm.classList.contains('error')) elm.classList.remove('error');
+            if (elm.classList.contains('error')) {
+                elm.classList.remove('error');
+                errorFields.pop(elm);
+            }
             console.log('success');
             //Если валидация прошла успешно, кнопка отправки формы должна стать неактивной и должен отправиться ajax-запрос на адрес, указанный в атрибуте action формы
 
-            //добавим обработчик события click для кнопки, подтверждающей отправку формы; после нажатия появляется элемент span.resultText внутри div#resultContainer c текстом 'Success' или 'Fault';
+            //добавим обработчик события click для кнопки, подтверждающей отправку формы; после нажатия появляется внутри div#resultContainer текст 'Success' или 'Fault';
 
-            /*button.addEventListener('click', function(){
-                
-            });*/
-        };
+            $('#submitButton').click(function () {
+                fetch('static/success.json')
+                    .then(res => res.json())
+                    .then(function (json) {
+                        if (typeOf(json.reason) == 'undefined')
+                            json.reason = '';
+                        document.getElementById('resultContainer').innerHTML = json.reason;
+                        return json.status
+                    }).then(status => document.getElementById('resultContainer').classList.add(status))
+                $('#submitButton').disabled;
+            });
+
+        }
         if (elm == phone) {
             let val = elm.value,
                 val_arr = [],
@@ -41,19 +54,20 @@ function onChg(elm, pattern, id_of_span) {
 
             if (val_sum > 30) {
                 showErr();
-            };
+            }
 
             console.log(val_arr, (val_sum > 30), val);
 
-        };
-    })
+        }
+    });
+
 
     function showErr() {
         span.removeAttribute('hidden');
         console.log('delited attribute hidden', span.hasAttribute('hidden'));
         elm.classList.add('error');
-    };
-};
+    }
+}
 
 
 let fio_onChg = onChg(fio, fio_pattern, 'fio_warn'),
