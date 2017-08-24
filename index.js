@@ -16,39 +16,51 @@ let fio = document.getElementById('fio'),
 //шаблоны для валидации 
 let fio_pattern = /(\w|[\u0410-\u044F])+\s(\w|[\u0410-\u044F])+\s(\w|[\u0410-\u044F])+/,
     email_pattern = /@ya.ru|yandex\.(ru|by|kz|ua|com)$/,
-    phone_pattern = /\+7\s*\(*\d{3}\)*(\s|-)*\d{3}(\s|-)*\d{2}(\s|-)*\d{2}\b/;
+    phone_pattern = /\+7\s*\(*\d{3}\)*\s*\d{3}\s*\d{2}\s*\d{2}\b/;
 
-function fullSubmition(elm, pattern, id_of_span) {
+var MyForm = {
+    validate: function () {
+        // передаем переменные, объявленные выше, функции fullValidation, тем самым проверяя форму
+        let fio_validation = fullValidation(fio, fio_pattern, 'fio_warn'),
+            email_validation = fullValidation(email, email_pattern, 'email_warn'),
+            phone_validation = fullValidation(phone, phone_pattern, 'phone_warn'),
+            unitedErrorFields = [];
 
-    let span = document.getElementById(id_of_span),
-        currentValidation = MyForm.fullValidation(elm, pattern, id_of_span);
+        return {
+            isValid: fio_validation.isValid && email_validation.isValid && phone_validation.isValid,
+            errorFields: unitedErrorFields.concat(fio_validation.errorFields, email_validation.errorFields, phone_validation.errorFields)
+        };
 
-    elm.addEventListener('change', currentValidation);
-    //Если валидация прошла успешно, кнопка отправки формы должна стать неактивной и должен отправиться ajax-запрос на адрес, указанный в атрибуте action формы
-    if (currentValidation.isValid) {
-        //добавим обработчик события click для кнопки, подтверждающей отправку формы;
-        function sendForm() {
-            button.disabled = true;
-            //отправка формы и получение ответа от "сервер"
-            function ajaxSendForm() {
-                axios({
-                    method: 'post',
-                    url: './static/progress.json'/*document.forms[0].action*/,
-                    data: MyForm.getData,
-                }).then(res => {
-                    if (res.data.status == 'error' || 'success') {
-                        document.getElementById('resultContainer').innerHTML = res.data.reason;
-                        document.getElementById('resultContainer').classList.add(status);
-                    }
-                    if (res.data.status == 'progress')
-                        setTimeout(ajaxSendForm, res.data.timeout);
-                });
-            }
+    },
+
+    submit: function () {
+        //валидация полей
+        function ValidatingAllFields() {
+            fullSubmition(fio, fio_pattern, 'fio_warn'),
+            fullSubmition(email, email_pattern, 'email_warn'),
+            fullSubmition(phone, phone_pattern, 'phone_warn');
         }
-        button.addEventListener('click', sendForm);
-    });
-}
-}
+
+        ValidatingAllFields();
+
+    },
+
+    getData: function () {
+        let obj = {
+            fio: document.getElementsByName('fio')[0].value,
+            email: document.getElementsByName('email')[0].value,
+            phone: document.getElementsByName('phone')[0].value
+        };
+        return obj;
+    },
+
+    setData: function (obj) {
+        document.getElementsByName('fio')[0].value = obj.fio;
+        document.getElementsByName('email')[0].value = obj.email;
+        document.getElementsByName('phone')[0].value = obj.phone;
+
+    }
+};
 
 function fullValidation(elm, pattern, id_of_span) {
     //массив инпутов, не прошедших валидацию, и переменная подтверждающая, что проверка пройдена
@@ -99,51 +111,34 @@ function fullValidation(elm, pattern, id_of_span) {
     }
 }
 
-var MyForm = {
-    validate: function () {
-        // передаем переменные, объявленные выше, функции fullValidation, тем самым проверяя форму
-        let fio_validation = MyForm.fullValidation(fio, fio_pattern, 'fio_warn'),
-            email_validation = MyForm.fullValidation(email, email_pattern, 'email_warn'),
-            phone_validation = MyForm.fullValidation(phone, phone_pattern, 'phone_warn'),
-            unitedErrorFields = [];
+function fullSubmition(elm, pattern, id_of_span) {
 
-        return {
-            isValid: fio_validation.isValid && email_validation.isValid && phone_validation.isValid,
-            errorFields: unitedErrorFields.concat(fio_validation.errorFields, email_validation.errorFields, phone_validation.errorFields)
-        };
+    let span = document.getElementById(id_of_span),
+        currentValidation = fullValidation(elm, pattern, id_of_span);
 
-    },
-
-    submit: function () {
-        //валидация полей
-
-        let fio_submit = MyForm.fullSubmition(fio, fio_pattern, 'fio_warn'),
-            email_submit = MyForm.fullSubmition(email, email_pattern, 'email_warn'),
-            phone_submit = MyForm.fullSubmition(phone, phone_pattern, 'phone_warn');
-
-        function ValidatingAllFields() {
-            fio_submit();
-            email_submit();
-            phone_submit();
+    elm.addEventListener('change', currentValidation);
+    //Если валидация прошла успешно, кнопка отправки формы должна стать неактивной и должен отправиться ajax-запрос на адрес, указанный в атрибуте action формы
+    if (currentValidation.isValid) {
+        //добавим обработчик события click для кнопки, подтверждающей отправку формы;
+        function sendForm() {
+            button.disabled = true;
+            //отправка формы и получение ответа от "сервера"
+            function ajaxSendForm() {
+                axios({
+                    method: 'post',
+                    url: './static/progress.json'/*document.forms[0].action*/,
+                    data: MyForm.getData,
+                }).then((res) => {
+                    if (res.data.status == 'error' || res.data.status == 'success') {
+                        document.getElementById('resultContainer').innerHTML = res.data.reason;
+                        document.getElementById('resultContainer').classList.add(status);
+                    }
+                    if (res.data.status == 'progress')
+                        setTimeout(ajaxSendForm, res.data.timeout);
+                });
+            }
         }
+    };
+}
 
-        button.addEventListener('click', ValidatingAllFields);
-
-    },
-
-    getData: function () {
-        let obj = {
-            fio: document.getElementsByName('fio')[0].value,
-            email: document.getElementsByName('email')[0].value,
-            phone: document.getElementsByName('phone')[0].value
-        };
-        return obj;
-    },
-
-    setData: function (obj) {
-        document.getElementsByName('fio')[0].value = obj.fio;
-        document.getElementsByName('email')[0].value = obj.email;
-        document.getElementsByName('phone')[0].value = obj.phone;
-
-    }
-};
+button.addEventListener('click', MyForm.submit);
