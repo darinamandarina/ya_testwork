@@ -16,7 +16,7 @@ let fio = document.getElementById('fio'),
 //шаблоны для валидации 
 let fio_pattern = /(\w|[\u0410-\u044F])+\s(\w|[\u0410-\u044F])+\s(\w|[\u0410-\u044F])+/,
     email_pattern = /@ya.ru|yandex\.(ru|by|kz|ua|com)$/,
-    phone_pattern = /\+7\s*\(*\d{3}\)*\s*\d{3}\s*\d{2}\s*\d{2}\b/;
+    phone_pattern = /\+7\s*\(*\d{3}\)*(\s|-)*\d{3}(\s|-)*\d{2}(\s|-)*\d{2}\b/;
 
 function fullSubmition(elm, pattern, id_of_span) {
 
@@ -32,8 +32,8 @@ function fullSubmition(elm, pattern, id_of_span) {
             //отправка формы и получение ответа от "сервер"
             function ajaxSendForm() {
                 axios({
-                    method: post,
-                    url: document.forms[0].action,
+                    method: 'post',
+                    url: './static/progress.json'/*document.forms[0].action*/,
                     data: MyForm.getData,
                 }).then(res => {
                     if (res.data.status == 'error' || 'success') {
