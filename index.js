@@ -16,7 +16,7 @@ let fio = document.getElementById('fio'),
 //шаблоны для валидации 
 let fio_pattern = /(\w|[\u0410-\u044F])+\s(\w|[\u0410-\u044F])+\s(\w|[\u0410-\u044F])+/,
     email_pattern = /@ya.ru|yandex\.(ru|by|kz|ua|com)$/,
-    phone_pattern = /\+7\s*\(*\d{3}\)*\s*\d{3}\s*\d{2}\s*\d{2}\b/;
+    phone_pattern =  /\+7\s*\(*\d{3}\)*(\s|-)*\d{3}(\s|-)*\d{2}(\s|-)*\d{2}\b/;
 
 var MyForm = {
     validate: function () {
@@ -93,7 +93,7 @@ function fullValidation(elm, pattern, id_of_span) {
             val_arr = [],
             val_sum = 0;
 
-        val = val.split('+')[1];
+        val=val.replace(/(\+|\s)/g,'');
         for (var i = 0; i < val.length; i++) {
             val_arr.push(val.slice(i, i + 1));
             val_sum += Number(val_arr[i]);
