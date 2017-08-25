@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <form  id="myForm" name="myForm"> <!--action="./static/progress.json"-->
+    <form  id="myForm" name="myForm" onsubmit="return false" action="./static/progress.json">
         <h1>Please fill this form</h1>
         <h4>Each field should be filled</h4>
         <fieldset>
@@ -21,8 +21,8 @@
         <button id="submitButton" >Submit</button>
         <div id="resultContainer"></div>
     </form>
-    <script src="index.js"></script>
     <script src="axios.js"></script>
+    <script type="text/javascript"  src="index.js"></script>
 </body>
 
 </html>
