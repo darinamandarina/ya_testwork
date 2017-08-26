@@ -5,11 +5,10 @@
     <meta charset="UTF-8">
     <title>Yandex Form</title>
     <link rel="stylesheet" href="style.css">
-    <script src="http://ajax.microsoft.com/ajax/jquery/jquery-1.4.2.min.js"></script>
 </head>
 
 <body>
-    <form  id="myForm" name="myForm" onsubmit="return false" action="./static/progress.json">
+    <form name="myForm" onsubmit="return false" action="./static/progress.json">
         <h1>Please fill this form</h1>
         <h4>Each field should be filled</h4>
         <fieldset>
@@ -19,10 +18,11 @@
             <div><label for="phone">Phone number</label><input id="phone" name="phone" type="tel" placeholder="+7(905)111-33-22" required datamessageid="warn"><br><span hidden id="phone_warn">только номер телефона, введеный без пробела и начинающийся с +7, сумма цифр которого не превышает 30</span></div>
         </fieldset>
         <button id="submitButton" >Submit</button>
-        <div id="resultContainer"></div>
     </form>
+    <div id="resultContainer" class=""></div>
+    
     <script src="axios.js"></script>
-    <script type="text/javascript"  src="index.js"></script>
+    <script type="text/javascript" src="index.js"></script>
 </body>
 
 </html>
