@@ -18,7 +18,6 @@ let fio_pattern = /(\w|[\u0410-\u044F])+\s(\w|[\u0410-\u044F])+\s(\w|[\u0410-\u0
     email_pattern = /@ya.ru|yandex\.(ru|by|kz|ua|com)$/,
     phone_pattern =  /\+7\s*\(*\d{3}\)*(\s|-)*\d{3}(\s|-)*\d{2}(\s|-)*\d{2}\b/;
 
-
 var MyForm = {
     validate: function () {
         //добавим обработчик события для каждого инпута, тем самым проверяя форму
@@ -32,52 +31,31 @@ var MyForm = {
 
         return {
             isValid,
-            errorFields 
+            errorFields
         };
-
     },
 
     submit: function () {
         //валидация полей
-        function ValidatingAllFields() {
-            fullSubmition(fio, fio_pattern, 'fio_warn'),
-            fullSubmition(email, email_pattern, 'email_warn'),
+        (function ValidatingAllFields() {
+            fullSubmition(fio, fio_pattern, 'fio_warn');
+            fullSubmition(email, email_pattern, 'email_warn');
             fullSubmition(phone, phone_pattern, 'phone_warn');
-        }
-
-        ValidatingAllFields();
+        })();
         //Если валидация прошла успешно, кнопка отправки формы должна стать неактивной и должен отправиться ajax-запрос на адрес, указанный в атрибуте action формы
-    if (MyForm.validate().isValid) {
-        //добавим обработчик события click для кнопки, подтверждающей отправку формы;
-        function sendForm() {
-            button.disabled = true;
-            //отправка формы и получение ответа от "сервера"
-            function ajaxSendForm() {
-                axios({
-                    method: 'post',
-                    url: document.forms[0].action,
-                    data: MyForm.getData()
-                    
-                }).then(res => {
-                    if (res.data.status == 'error' || res.data.status == 'success') {
-                        document.getElementById('resultContainer').innerHTML = res.data.reason;
-                        document.getElementById('resultContainer').classList.add(status);
-                    }
-                    if (res.data.status == 'progress')
-                        setTimeout(ajaxSendForm, res.data.timeout);
-                });
-                
-            }
-            ajaxSendForm();
+        if (MyForm.validate().isValid) {
+            document.forms[0].action = "./static/success.json";
+            sendForm();
         }
-        sendForm();
-    };
-
+        if (!MyForm.validate().isValid) {
+            document.forms[0].action = "./static/error.json";
+            sendForm();
+        }
     },
 
     getData: function () {
         let obj = {
-            fio: fio.value, //
+            fio: fio.value,
             email: email.value,
             phone: phone.value
         };
@@ -88,7 +66,6 @@ var MyForm = {
         fio.value = obj.fio;
         email.value = obj.email;
         phone.value = obj.phone;
-
     }
 };
 
@@ -96,13 +73,14 @@ function fullValidation(elm, pattern, id_of_span) {
     //массив инпутов, не прошедших валидацию, и переменная подтверждающая, что проверка пройдена
     let errorFields = [],
         isValid = true;
-        span = document.getElementById(id_of_span);
+    span = document.getElementById(id_of_span);
 
     //функция, которая вызывается, если при валидации формы возникает ошибка
     function showErr() {
         span.removeAttribute('hidden');
         console.log('delited attribute hidden', span.hasAttribute('hidden'));
         elm.classList.add('error');
+
         return isValid = false;
     }
 
@@ -126,15 +104,11 @@ function fullValidation(elm, pattern, id_of_span) {
             val_arr.push(val.slice(i, i + 1));
             val_sum += Number(val_arr[i]);
         }
-
         if (val_sum > 30) {
             showErr();
         }
     }
-    return {
-        isValid,
-        errorFields
-    }
+    return {isValid, errorFields}
 }
 
 function fullSubmition(elm, pattern, id_of_span) {
@@ -143,9 +117,31 @@ function fullSubmition(elm, pattern, id_of_span) {
         currentValidation = fullValidation(elm, pattern, id_of_span);
 
     elm.addEventListener('change', currentValidation);
-    
 }
 
-//console.log(MyForm.validate(), MyForm.submit());
+function sendForm() {
+    button.disabled = true;
+    //отправка формы и получение ответа от "сервера"
+    (function ajaxSendForm() {
+        axios({
+            method: 'post',
+            url: document.forms[0].action,
+            data: MyForm.getData()
 
+        }).then((res) => {
+
+            if (res.data.status == 'error' || res.data.status == 'success'){
+            div = document.getElementById('resultContainer');
+            div.innerHTML = res.data.reason;
+            div.classList.add(res.data.status);
+        }
+        if (res.data.status == 'progress'){
+            console.log('request is running');
+            setTimeout(ajaxSendForm, res.data.timeout);
+        }
+        });
+    })();
+}
+
+//добавим обработчик события click для кнопки, подтверждающей отправку формы;
 button.addEventListener('click', MyForm.submit);
